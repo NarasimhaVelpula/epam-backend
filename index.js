@@ -3,6 +3,7 @@ const mongoose=require('mongoose')
 
 const Posts=require('./routes/posts')
 const Auth=require('./routes/auth')
+const history=require('./routes/history')
 const cors=require('cors')
 
 const app=express()
@@ -13,6 +14,7 @@ app.use(cors())
 app.use(express.json())
 app.use('/auth',Auth)
 app.use('/posts',Posts)
+app.use('/history',history)
 
 
 mongoose.connect(MONGO_CONNECTION_STRING,{useNewUrlParser:true,useUnifiedTopology:true})

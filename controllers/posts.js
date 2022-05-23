@@ -13,7 +13,7 @@ const getPosts=async(req,res)=>{
     }
 }
 
-const createPost=async(req,res)=>{
+const createPost=async(req,res,next)=>{
     console.log("-----------------Creating Post----------------")
     try{
         const {email,id}=req.verified
@@ -24,7 +24,8 @@ const createPost=async(req,res)=>{
         })
         const newPost=await post.save()
         console.log("Post Saved Succesfully : "+newPost._id)
-        res.status(200).send("Post Saved Successfully")
+        req.postId=newPost._id
+        next()
     }
     catch(err){
         console.log(err)
@@ -145,10 +146,30 @@ const selectATenant=async(req,res)=>{
     }
     catch(err){
         console.log(err)
-        res.status(500).send("something will went wrong always, dont know why will find out")
+        res.status(500).send("something will went wrong always, dont know why, will find out")
+    }
+}
+
+const getPost=async (req,res)=>{
+    console.log("--------------Get Single Post--------------")
+    try{
+        const {id,email}=req.verified
+        const {id:postId}=req.params
+        let requiredPost=await Posts.findById(postId)
+        if(requiredPost.ownerId==id){
+            res.status(200).send(requiredPost)
+        }
+        else{
+            delete requiredPost.interests
+            res.status(200).send(requiredPost)
+        }
+    }
+    catch(err){
+        console.log(err)
+        res.status(500).send("something will went wrong always, dont know why, will find out")
     }
 }
 
 
 
-module.exports={getPosts,createPost,showInterest,makeActive,makeInactive,getInterests,selectATenant}
+module.exports={getPosts,createPost,showInterest,makeActive,makeInactive,getInterests,selectATenant,getPost}
